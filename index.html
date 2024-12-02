@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo Educacional - Aprendendo Brincando</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #e9f7ef; /* Fundo verde claro */
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            flex-direction: column;
+        }
+        #game-container {
+            max-width: 600px;
+            width: 100%;
+            background-color: white;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #2e7d32;
+        }
+        .question {
+            margin-bottom: 20px;
+        }
+        .options {
+            list-style: none;
+            padding: 0;
+        }
+        .options li {
+            margin: 10px 0;
+        }
+        .options button {
+            width: 100%;
+            padding: 10px;
+            font-size: 1em;
+            background-color: #43a047;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .options button:hover {
+            background-color: #66bb6a;
+        }
+        .feedback {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+        #next-question {
+            margin-top: 20px;
+            padding: 10px 20px;
+            font-size: 1em;
+            background-color: #2e7d32;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: none;
+        }
+        #next-question:hover {
+            background-color: #43a047;
+        }
+        #license-info {
+            margin-top: 20px;
+            font-size: 1em;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+    <div id="game-container">
+        <h1>Aprendendo Brincando</h1>
+        <div id="question-container">
+            <p class="question" id="question">Carregando pergunta...</p>
+            <ul class="options" id="options"></ul>
+        </div>
+        <p class="feedback" id="feedback"></p>
+        <button id="next-question">Próxima Pergunta</button>
+    </div>
+
+    <div id="license-info">
+        <p>Este jogo é disponibilizado sob a licença <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">Creative Commons BY-SA 4.0</a>.</p>
+    </div>
+
+    <script>
+        const questions = [
+            // História
+            {
+                question: "Em que ano ocorreu a Proclamação da República no Brasil?",
+                options: ["1889", "1891", "1900", "1910"],
+                answer: "1889"
+            },
+            // Geografia
+            {
+                question: "Qual é o maior país do mundo em área territorial?",
+                options: ["Estados Unidos", "China", "Rússia", "Canadá"],
+                answer: "Rússia"
+            },
+            // Português
+            {
+                question: "Qual é a frase correta?",
+                options: ["Ele viu os amigos ontem", "Ele viu os amigos anteontem", "Ele viu os amigos amanhã", "Ele viu os amigos hoje"],
+                answer: "Ele viu os amigos ontem"
+            },
+            // Matemática
+            {
+                question: "Quanto é 25 x 16?",
+                options: ["350", "400", "375", "500"],
+                answer: "400"
+            },
+            // Ciências
+            {
+                question: "O que é fotossíntese?",
+                options: [
+                    "O processo de transformação de alimentos em energia",
+                    "A absorção de nutrientes pelas raízes",
+                    "O processo que as plantas usam para converter luz solar em energia",
+                    "A decomposição de matéria orgânica"
+                ],
+                answer: "O processo que as plantas usam para converter luz solar em energia"
+            },
+            // Biologia
+            {
+                question: "Qual é a célula responsável pela defesa do corpo humano?",
+                options: ["Neurônio", "Glóbulo vermelho", "Glóbulo branco", "Plaquetas"],
+                answer: "Glóbulo branco"
+            },
+            // Química
+            {
+                question: "Qual é a fórmula química da água?",
+                options: ["CO2", "O2", "H2O", "NaCl"],
+                answer: "H2O"
+            },
+            // Sociologia
+            {
+                question: "Quem é considerado o pai da Sociologia?",
+                options: ["Karl Marx", "Émile Durkheim", "Max Weber", "Augusto Comte"],
+                answer: "Augusto Comte"
+            },
+            // Filosofia
+            {
+                question: "Qual filósofo é conhecido pela frase 'Penso, logo existo'?",
+                options: ["Platão", "Aristóteles", "René Descartes", "Sócrates"],
+                answer: "René Descartes"
+            }
+        ];
+
+        let currentQuestionIndex = 0;
+        let score = 0;
+
+        const questionElement = document.getElementById("question");
+        const optionsElement = document.getElementById("options");
+        const feedbackElement = document.getElementById("feedback");
+        const nextButton = document.getElementById("next-question");
+
+        function loadQuestion() {
+            const currentQuestion = questions[currentQuestionIndex];
+            questionElement.textContent = currentQuestion.question;
+            optionsElement.innerHTML = "";
+
+            currentQuestion.options.forEach(option => {
+                const button = document.createElement("button");
+                button.textContent = option;
+                button.onclick = () => checkAnswer(option);
+                optionsElement.appendChild(button);
+            });
+
+            feedbackElement.textContent = "";
+            nextButton.style.display = "none";
+        }
+
+        function checkAnswer(selectedOption) {
+            const currentQuestion = questions[currentQuestionIndex];
+            if (selectedOption === currentQuestion.answer) {
+                feedbackElement.textContent = "Resposta correta! 🎉";
+                feedbackElement.style.color = "green";
+                score++;
+            } else {
+                feedbackElement.textContent = `Resposta errada! 😞 A resposta certa é: ${currentQuestion.answer}`;
+                feedbackElement.style.color = "red";
+            }
+            nextButton.style.display = "inline-block";
+        }
+
+        nextButton.onclick = () => {
+            currentQuestionIndex++;
+            if (currentQuestionIndex < questions.length) {
+                loadQuestion();
+            } else {
+                questionElement.textContent = `Parabéns! Você acertou ${score} de ${questions.length} perguntas.`;
+                optionsElement.innerHTML = "";
+                feedbackElement.textContent = "Fim do jogo! Obrigado por participar. 🎉";
+                nextButton.style.display = "none";
+            }
+        };
+
+        loadQuestion();
+    </script>
+</body>
+</html>
